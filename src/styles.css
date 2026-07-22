@@ -61,6 +61,21 @@ body {
     justify-content: space-between;
 }
 
+.home-el h2 {
+    text-align: center;
+    margin: .8rem auto;
+}
+
+.home-el form {
+    display: flex;
+    flex-direction: column;
+}
+
+#search-con {
+    display: flex;
+    gap: 2rem;
+}
+
 footer {
     margin-top: auto;
 }
@@ -68,9 +83,15 @@ footer {
 .btn {
     border-radius: .8rem;
     border: 1px solid transparent;
+    background: white;
 }
 
 .btn svg {
     width: 100%;
     height: 100%;
+}
+
+#geolocation {
+    max-width: 50px;
+    padding: .4rem;
 }

@@ -14,8 +14,10 @@ export function currentTime() {
     return new Date().toLocaleTimeString('en-US', { hour12: false });
 }
 
-export async function collectInput(e){
+let inputDelay, activeRequest;
+export function collectInput(e){
     e.preventDefault();
+    clearTimeout(inputDelay);
     let val;
     switch(e.type){
         case 'submit':
@@ -25,21 +27,51 @@ export async function collectInput(e){
         val = e.target.value.trim();
             break;
     }
-    if (val === '') return;
-    const encoded = encodeURIComponent(val);
-    await findLocationOptions(encoded);
+    if (val.length < 3) {
+        activeRequest?.abort();
+        return;
+    }
+    inputDelay = setTimeout(  async () => {
+        const locationOptions = await findLocationOptions(val);
+        console.log('Options found: ', locationOptions);
+    }, 400);
 }
 
 async function findLocationOptions(location) {
-    const url = `https://nominatim.openstreetmap.org/search?q=${location}&format=json&addressdetails=1&limit=10`;
-    console.log(url);
+    activeRequest?.abort();
+    activeRequest = new AbortController();
+    const params = new URLSearchParams ({
+        text: location,
+        type: 'city',
+        format: 'json',
+        limit: 30,
+        filter: 'countrycode:us',
+        apiKey: '1fcfeda0ee6d4c378383e6b12cb99bbd',
+        options: 'nonulls'
+    });
+    const url = `https://api.geoapify.com/v1/geocode/autocomplete?${params}`;
+    console.log('Current search: ', url);
     try {
         const res = await fetch(url, {
-            headers: { 'User-Agent': 'ZehnosWeatherApp/1.0' }
+            signal: activeRequest.signal,
         });
+        if (!res.ok) {
+            throw new Error(`Request failed ${res.status}`);
+            return;
+        }
         const data = await res.json();
-        data.sort((locA, locB) => locA.importance - locB.importance);
-        console.log('locations found from input: ', JSON.stringify(data, null, 2));
+        const results = data?.results;
+        for (const location of results) {
+            console.log(location);
+        }
+        /*
+        const formatted = data.results.forEach((res) => {
+             {city: res.city, state: res.state, country: res.country}
+        });
+
+         */
+
+        return ;
     } catch (err) {
         console.error({code: err.code, msg: err.message})
     }
