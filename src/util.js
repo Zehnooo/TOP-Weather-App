@@ -1,6 +1,8 @@
 import {renderOptions} from "./dom.js";
 
 
+
+
 export function currentDate() {
     const d = new Date();
     const op = {
@@ -18,6 +20,7 @@ export function currentTime() {
 let inputDelay, activeRequest;
 export function collectInput(e){
     e.preventDefault();
+    document.querySelector('#options-drawer').replaceChildren();
     clearTimeout(inputDelay);
     let val;
     switch(e.type){
@@ -60,7 +63,7 @@ async function findLocationOptions(location) {
         }
         const data = await res.json();
         const results = data?.results;
-        return results.map(({ formatted, lon, lat }) => ({ formatted, lon, lat }));
+        return results.map(({ city, state, lon, lat }) => ({ city, state, lon, lat }));
 
     } catch (err) {
         console.error({code: err.code, msg: err.message})
