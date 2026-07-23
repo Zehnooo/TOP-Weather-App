@@ -1,3 +1,4 @@
+import {renderOptions} from "./dom.js";
 
 
 export function currentDate() {
@@ -32,8 +33,7 @@ export function collectInput(e){
         return;
     }
     inputDelay = setTimeout(  async () => {
-        const locationOptions = await findLocationOptions(val);
-        console.log('Options found: ', locationOptions);
+        renderOptions(await findLocationOptions(val));
     }, 400);
 }
 
@@ -44,7 +44,7 @@ async function findLocationOptions(location) {
         text: location,
         type: 'city',
         format: 'json',
-        limit: 30,
+        limit: 10,
         filter: 'countrycode:us',
         apiKey: '1fcfeda0ee6d4c378383e6b12cb99bbd',
         options: 'nonulls'
@@ -61,17 +61,8 @@ async function findLocationOptions(location) {
         }
         const data = await res.json();
         const results = data?.results;
-        for (const location of results) {
-            console.log(location);
-        }
-        /*
-        const formatted = data.results.forEach((res) => {
-             {city: res.city, state: res.state, country: res.country}
-        });
+        return results.map(({ formatted, lon, lat }) => ({ formatted, lon, lat }));
 
-         */
-
-        return ;
     } catch (err) {
         console.error({code: err.code, msg: err.message})
     }

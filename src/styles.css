@@ -1,5 +1,10 @@
 
 :root {
+    --wh-base: #FFFFFF;
+    --wh-sec: #F8F8FF;
+    --gy-base: #E5E4E2;
+    --gy-sec: #BEBFC5;
+
     --blue-grad:
     linear-gradient(
             to bottom,
