@@ -57,7 +57,6 @@ async function findLocationOptions(location) {
         });
         if (!res.ok) {
             throw new Error(`Request failed ${res.status}`);
-            return;
         }
         const data = await res.json();
         const results = data?.results;
