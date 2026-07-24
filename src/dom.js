@@ -36,12 +36,13 @@ const homePage = () => {
 
                 inp.placeholder = 'Chicago';
                 inp.addEventListener('input', collectInput);
+                inp.clearable = true;
                 lab.htmlFor = 'location-input';
 
                 const autocompleteOptions = createElement('div', ['home-el'], 'options-drawer');
 
 
-        const locationButton = createElement('button', ['home-el', 'btn'], 'geolocation');
+        const locationButton = createElement('wa-button', [], 'geolocation');
 
                 locationButton.addEventListener('click', async ()  => {
                         try {
