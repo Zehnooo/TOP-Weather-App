@@ -209,6 +209,7 @@ footer {
     );
     background-size: 200% 100%;
     animation: load 1.5s infinite linear;
+    box-shadow: var(--sm-shdw);
 }
 
 .loading.card {
