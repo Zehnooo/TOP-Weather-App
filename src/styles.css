@@ -78,19 +78,12 @@ body {
     height: 100%;
     width: 100%;
     align-items: center;
+    padding: 1rem;
 }
 
 .home-con {
     justify-content: center;
 }
-
-.location-con {
-    justify-content: flex-start;
-    background: var(--wh-base);
-    border-radius: .6rem;
-    box-shadow: var(--lg-shdw);
-}
-
 
 .home-el h2 {
     text-align: center;
@@ -119,7 +112,7 @@ body {
     justify-content: center;
     border: 1px solid rgba(0, 0, 0, 0.08);
     background: var(--wh-base);
-    padding: .6rem;
+    padding: 1rem;
     border-radius: .6rem;
     box-shadow: var(--lg-shdw);
     max-width: 400px;
@@ -223,13 +216,12 @@ footer {
     border: 1px solid #e1e1e1;
     border-radius: 8px;
     padding: 16px;
-    background: #fff;
 }
 
 .loading.image {
     width: 50%;
-    height: 150px;
-    margin-bottom: 12px;
+    height: 200px;
+    margin-bottom: .8rem;
 }
 .loading.title {
     height: 20px;
@@ -250,16 +242,77 @@ footer {
     }
 }
 
-.location-con > section {
+.location-con {
+    justify-content: flex-start;
+    background: var(--wh-base);
+    border-radius: .6rem;
+    box-shadow: var(--lg-shdw);
+    overflow-y: auto;
+}
+
+.location-con > section > * {
+    width: 100%;
+    height: auto;
+    justify-content: center;
+    display: flex;
+}
+
+.location-head, .location-body, .location-footer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
     height: 100%;
     width: 100%;
+    padding: .6rem;
+    max-width: 800px;
 }
 
 .location-head {
-    width: 100%;
-    align-items: center;
-    margin: 0 auto;
-    justify-content: center;
+    max-height: max-content;
+}
+
+.location-head #main-info {
+    max-height: max-content;
     display: flex;
     flex-direction: column;
+    gap: 1rem;
+    height: 100%;
+    width: 100%;
+    align-items: center;
+}
+
+.location-head #main-info .loading.text {
+    background: var(--wh-base);
+    min-height: 75px;
+}
+
+.location-body {
+    justify-content: space-evenly;
+}
+
+.location-footer {
+    max-height: 200px;
+    justify-content: center;
+}
+
+#temp-container {
+    min-height: 75px;
+    gap: .6rem;
+    display: flex;
+}
+
+.icon-container {
+    align-items: center;
+    justify-content: center;
+    display: flex;
+}
+
+.future-weather {
+    display: flex;
+    gap: .6rem;
+}
+
+.future-weather > div {
+    max-width: 125px;
 }

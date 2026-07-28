@@ -105,10 +105,13 @@ const loadLocationPage = () => {
 
         const locationHeader = () => {
                 const head = createElement('section', ['location-head']);
+                const con = createElement('div', ['loading', 'card'], 'main-info');
                 const d = createElement('p', ['loading', 'text'], 'date-field', '');
                 const t = createElement('p', ['loading', 'text'], 'time-field', '');
                 const l = createElement('p', ['loading', 'text'], 'location-field',  '' );
-                head.append(d, t, l);
+
+                con.append(d, t, l);
+                head.append(con);
                 return head;
         }
 
@@ -118,24 +121,30 @@ const loadLocationPage = () => {
                 const i = createElement('img', ['loading', 'image'], 'weather-icon');
 
                 const tempCon = createElement('div', [], 'temp-container');
-                const maxTemp = createElement('p', ['loading', 'text'], 'max-temp');
-                const currentTemp = createElement('p', ['loading', 'text'], 'current-temp');
-                const minTemp = createElement('p', ['loading', 'text'], 'min-temp');
+                const maxTemp = createElement('p', ['loading', 'card'], 'max-temp');
+                const currentTemp = createElement('p', ['loading', 'card'], 'current-temp');
+                const minTemp = createElement('p', ['loading', 'card'], 'min-temp');
 
                 tempCon.append(minTemp, currentTemp, maxTemp);
                 figure.append(i);
                 s.append(figure, tempCon);
                 return s;
         }
-
         const futureWeather = () => {
                 const s = createElement('section', ['location-footer']);
+                const futureCon = createElement('div', ['future-weather']);
+                const d1 = createElement('div', ['loading', 'card', 'future-day'], 'd1');
+                const d2 = createElement('div', ['loading', 'card', 'future-day'], 'd2');
+                const d3 = createElement('div', ['loading', 'card', 'future-day'], 'd3');
+                const d4 = createElement('div', ['loading', 'card', 'future-day'], 'd4');
+                const d5 = createElement('div', ['loading', 'card', 'future-day'], 'd5');
 
-
+                futureCon.append(d1, d2, d3, d4, d5);
+                s.append(futureCon);
                 return s;
         }
 
-        con.append(locationHeader(), currentWeather());
+        con.append(locationHeader(), currentWeather(), futureWeather());
         return con;
 }
 
