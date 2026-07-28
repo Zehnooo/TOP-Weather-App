@@ -72,14 +72,25 @@ body {
     padding: 1rem;
 }
 
-.home-container#content {
-    justify-content: center;
+#content {
     display: flex;
     flex-direction: column;
     height: 100%;
     width: 100%;
     align-items: center;
 }
+
+.home-con {
+    justify-content: center;
+}
+
+.location-con {
+    justify-content: flex-start;
+    background: var(--wh-base);
+    border-radius: .6rem;
+    box-shadow: var(--lg-shdw);
+}
+
 
 .home-el h2 {
     text-align: center;
@@ -192,4 +203,63 @@ footer {
 
 #options-drawer #no-locations {
     cursor: default;
+}
+
+.loading {
+    opacity: .8;
+    border-radius: .8rem;
+    background: #e2e8f0 linear-gradient(
+            90deg,
+            #e2e8f0 0px,
+            #f8fafc 40px,
+            #e2e8f0 80px
+    );
+    background-size: 200% 100%;
+    animation: load 1.5s infinite linear;
+}
+
+.loading.card {
+    width: 400px;
+    border: 1px solid #e1e1e1;
+    border-radius: 8px;
+    padding: 16px;
+    background: #fff;
+}
+
+.loading.image {
+    width: 50%;
+    height: 150px;
+    margin-bottom: 12px;
+}
+.loading.title {
+    height: 20px;
+    width: 70%;
+    margin-bottom: 10px;
+}
+.loading.text {
+    height: 14px;
+    width: 90%;
+}
+
+@keyframes load {
+    0% {
+        background-position: 100% 0;
+    }
+    100% {
+        background-position: -100% 0;
+    }
+}
+
+.location-con > section {
+    height: 100%;
+    width: 100%;
+}
+
+.location-head {
+    width: 100%;
+    align-items: center;
+    margin: 0 auto;
+    justify-content: center;
+    display: flex;
+    flex-direction: column;
 }

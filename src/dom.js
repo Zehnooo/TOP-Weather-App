@@ -1,11 +1,19 @@
 import "./reset.css"
 import "./styles.css";
 import  { state }  from './state.js';
-import {currentDate, currentTime, collectInput, saveLocation, loadWeather, updateRecentLocations} from './util.js';
+import {collectInput, saveLocation, loadWeather, updateRecentLocations} from './util.js';
 import { locationModule } from "./location.js";
 
-const main = document.querySelector('#root');
+import { rain } from './images/cloud-rain.svg';
+import { snow } from './images/cloud-snow.svg';
+import { cloudy } from './images/cloudy.svg';
+import { partlyCloudy } from './images/partly-cloudy.svg';
+import { sunrise } from './images/sunrise.svg';
+import { sunset } from './images/sunset.svg';
+import { high } from './images/temp-high.svg';
+import { low } from './images/temp-low.svg'
 
+const main = document.querySelector('#root');
 
 
 const bg = {
@@ -22,7 +30,7 @@ export function initDom () {
 }
 
 const homePage = () => {
-        const con = createElement('div', ['home-el', 'home-container'], 'content');
+        const con = createElement('div', ['home-con'], 'content');
 
         const inpDiv = createElement('div', ['home-el'], 'search-con');
 
@@ -32,10 +40,9 @@ const homePage = () => {
 
 
                 const inp = createElement('wa-input', ['home-el'], 'location-input');
-                inp.setAttribute('label', 'City');
-                inp.setAttribute('hint', 'Enter city with or without the state. E.x.: Chicago IL');
+                inp.setAttribute('label', 'Location');
                 inp.setAttribute('with-clear', 'with-clear')
-                inp.placeholder = 'Chicago';
+                inp.placeholder = 'Chicago IL';
                 inp.addEventListener('input', collectInput);
 
                 const autocompleteOptions = createElement('div', ['home-el'], 'options-drawer');
@@ -79,19 +86,60 @@ const globalFooter = () => {
                 bgSwitch.innerHTML = '<svg width="64px" height="64px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <path d="M9 3V7M15 3V6M4 10H20M12 21C10.2337 21 8.91561 19.3737 9.28133 17.6457L9.34332 17.3528C9.56076 16.3254 9.04388 15.2832 8.09439 14.8346L5.9897 13.8401C4.77487 13.2661 4 12.043 4 10.6994V4.63149C4 3.73044 4.73044 3 5.63149 3H18.3685C19.2696 3 20 3.73044 20 4.63149V10.6994C20 12.043 19.2251 13.2661 18.0103 13.8401L15.9056 14.8346C14.9561 15.2832 14.4392 16.3254 14.6567 17.3528L14.7187 17.6457C15.0844 19.3737 13.7663 21 12 21Z" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path> </g></svg>';
                 bgSwitch.addEventListener('click', changeBg);
 
-        tools.append(bgSwitch);
+        const testButton = createElement('button', ['btn'], 'test-button', 'Tester');
+        testButton.addEventListener('click', () => {
+                main.append(loadLocationPage());
+        })
+
+        tools.append(bgSwitch, testButton);
         f.append(tools);
         return f;
 }
 
-/*
-const locationHeader = () => {
-        const head = createElement('div');
-        const d = createElement('p', ['head-el'], 'date-field', String(currentDate()));
-        const t = createElement('p', ['head-el'], 'time-field', String(currentTime));
-        const l = createElement('p', ['head-el'], 'location-field',  ADD LOCATION DATA );
+const loadLocationPage = () => {
+        main.replaceChildren();
+
+        const con = createElement('div', ['location-con'], 'content');
+        const { location } = state;
+        console.log(location);
+
+        const locationHeader = () => {
+                const head = createElement('section', ['location-head']);
+                const d = createElement('p', ['loading', 'text'], 'date-field', '');
+                const t = createElement('p', ['loading', 'text'], 'time-field', '');
+                const l = createElement('p', ['loading', 'text'], 'location-field',  '' );
+                head.append(d, t, l);
+                return head;
+        }
+
+        const currentWeather = () => {
+                const s = createElement('section', ['location-body']);
+                const figure = createElement('figure', ['icon-container']);
+                const i = createElement('img', ['loading', 'image'], 'weather-icon');
+
+                const tempCon = createElement('div', [], 'temp-container');
+                const maxTemp = createElement('p', ['loading', 'text'], 'max-temp');
+                const currentTemp = createElement('p', ['loading', 'text'], 'current-temp');
+                const minTemp = createElement('p', ['loading', 'text'], 'min-temp');
+
+                tempCon.append(minTemp, currentTemp, maxTemp);
+                figure.append(i);
+                s.append(figure, tempCon);
+                return s;
+        }
+
+        const futureWeather = () => {
+                const s = createElement('section', ['location-footer']);
+
+
+                return s;
+        }
+
+        con.append(locationHeader(), currentWeather());
+        return con;
 }
-*/
+
+
 
 export function renderOptions(options){
         try {
@@ -105,9 +153,12 @@ export function renderOptions(options){
                         console.log("formatted option", option);
                         const op = createElement('p', ['home-el'], 'location-found', String(`${option.city}, ${option.state}`));
                         op.addEventListener('click', async (e) => {
+                                locationList.style.opacity = 0;
                                 const updatedState = saveLocation(e);
                                 updateRecentLocations(updatedState);
+                                main.append(loadLocationPage());
                                 await loadWeather();
+
                                 console.log(state);
                         });
                         op.dataset.locationName = `${option.city}, ${option.state}`

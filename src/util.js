@@ -1,22 +1,6 @@
 import {renderOptions} from "./dom.js";
 import {state} from "./state.js";
 
-
-
-export function currentDate() {
-    const d = new Date();
-    const op = {
-        weekday: 'long',
-        month: 'long',
-        day: 'numeric'
-    };
-    return (d.toLocaleString('en-us', op));
-}
-
-export function currentTime() {
-    return new Date().toLocaleTimeString('en-US', { hour12: false });
-}
-
 let inputDelay, activeRequest;
 export function collectInput(e){
     e.preventDefault();
@@ -101,21 +85,21 @@ export async function loadWeather(){
         console.log(data);
         buildWeatherData(data);
     } catch (err) {
-        console.error({c: err.code, m: err.message})
+        console.error({c: err.code, m: err.message});
     }
 
 
 }
 
 function buildWeatherData(data){
-    state.location.weatherData = data.days
+    state.location.weatherData = data?.days
         .map(({ datetime, description, temp, tempmax, tempmin, feelslike, hours, humidity, precip, sunrise, sunset }) => ({
             date: datetime, desc: description, temp: temp, maxTemp: tempmax, minTemp: tempmin, feelsTemp: feelslike, hours, humid: humidity, precip, sunrise, sunset
         }));
 }
 
 
-export function updateRecentLocations(state){
+export function updateRecentLocations(){
     const recents = state.recentLocations;
     const exists = recents.some(obj => `${state.location.name}` in obj);
     if (exists) {
