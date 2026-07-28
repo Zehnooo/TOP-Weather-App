@@ -1,10 +1,12 @@
 export const state =  {
     location: {
+        name: null,
         latitude: null,
         longitude: null,
+        weatherData: {}
     },
-    activeLocation: null,
-    savedLocations: [],
+    recentLocations: [],
+    savedLocations: {},
     activePage: null,
     previousPage: null,
 }

@@ -1,5 +1,5 @@
 import {renderOptions} from "./dom.js";
-
+import {state} from "./state.js";
 
 
 
@@ -31,12 +31,14 @@ export function collectInput(e){
         val = e.target.value.trim();
             break;
     }
-    if (val.length < 3) {
+    if (val.length < 3 || val === '') {
         activeRequest?.abort();
         return;
     }
+    let locations = null;
     inputDelay = setTimeout(  async () => {
-        renderOptions(await findLocationOptions(val));
+        locations = await findLocationOptions(val);
+        renderOptions(locations);
     }, 400);
 }
 
@@ -47,7 +49,7 @@ async function findLocationOptions(location) {
         text: location,
         type: 'city',
         format: 'json',
-        limit: 10,
+        limit: 15,
         filter: 'countrycode:us',
         apiKey: '1fcfeda0ee6d4c378383e6b12cb99bbd',
         options: 'nonulls'
@@ -62,10 +64,66 @@ async function findLocationOptions(location) {
             throw new Error(`Request failed ${res.status}`);
         }
         const data = await res.json();
-        const results = data?.results;
-        return results.map(({ city, state, lon, lat }) => ({ city, state, lon, lat }));
+        const dupes = new Set();
+
+        return data?.results
+            .map(({ city, state, lon, lat }) => ({ city, state, lon, lat }))
+            .filter(({ city, state }) => {
+                const key = `${city}|${state}`;
+                if (dupes.has(key)) return false;
+                dupes.add(key);
+                return true;
+        });
+
 
     } catch (err) {
         console.error({code: err.code, msg: err.message})
     }
+}
+
+export function saveLocation(e){
+    e.preventDefault();
+    state.location.name = e.target.dataset.locationName;
+    state.location.latitude = e.target.dataset.lat;
+    state.location.longitude = e.target.dataset.lng;
+    return {...state}
+}
+
+export async function loadWeather(){
+    try {
+        const {longitude, latitude} = {...state.location}
+        const url = 'https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/';
+        const key = '?key=' + 'B2D6UMP5Y2C8Z28DEVB849T3K';
+        const location = `${latitude},${longitude}`
+        const res = await fetch(url + location + key);
+        if (!res.ok) throw new Error(`Weather request failed ${res.status}`);
+        const data = await res.json();
+        console.log(data);
+        buildWeatherData(data);
+    } catch (err) {
+        console.error({c: err.code, m: err.message})
+    }
+
+
+}
+
+function buildWeatherData(data){
+    state.location.weatherData = data.days
+        .map(({ datetime, description, temp, tempmax, tempmin, feelslike, hours, humidity, precip, sunrise, sunset }) => ({
+            date: datetime, desc: description, temp: temp, maxTemp: tempmax, minTemp: tempmin, feelsTemp: feelslike, hours, humid: humidity, precip, sunrise, sunset
+        }));
+}
+
+
+export function updateRecentLocations(state){
+    const recents = state.recentLocations;
+    const exists = recents.some(obj => `${state.location.name}` in obj);
+    if (exists) {
+        console.log('not saving location, already exists')
+        return;
+    }
+    recents.push({
+        [state.location.name]: [state.location.longitude, state.location.latitude]
+    });
+    return {...state}
 }
