@@ -1,20 +1,32 @@
 import "./reset.css"
 import "./styles.css";
 import  { state }  from './state.js';
-import {collectInput, saveLocation, loadWeather, updateRecentLocations} from './util.js';
+import {collectInput, saveLocation, loadWeather, updateRecentLocations, formatDate} from './util.js';
 import { locationModule } from "./location.js";
 
-import { rain } from './images/cloud-rain.svg';
-import { snow } from './images/cloud-snow.svg';
-import { cloudy } from './images/cloudy.svg';
-import { partlyCloudy } from './images/partly-cloudy.svg';
-import { sunrise } from './images/sunrise.svg';
-import { sunset } from './images/sunset.svg';
-import { high } from './images/temp-high.svg';
-import { low } from './images/temp-low.svg'
+import rain  from './images/cloud-rain.svg';
+import snow  from './images/cloud-snow.svg';
+import cloudy from './images/cloudy.svg';
+import partlyCloudy from './images/partly-cloudy.svg';
+import sunrise  from './images/sunrise.svg';
+import sunset  from './images/sunset.svg';
+import high from './images/temp-high.svg';
+import low from './images/temp-low.svg'
+import sunny  from './images/sun.svg';
+import defaultIcon  from './images/default.svg';
 
 const main = document.querySelector('#root');
 
+const resolveIcon = (desc) => {
+        let s = desc.toLowerCase();
+        if (s.includes('partly cloudy')) { return partlyCloudy; }
+        if (s.includes('cloudy') && !s.includes('partly cloudy')) { return cloudy; }
+        if (s.includes('sunny')) { return sunny }
+        if (s.includes('snow')) { return snow }
+        if (s.includes('rain')) { return rain }
+
+        return defaultIcon;
+}
 
 const bg = {
        blue: 'linear-gradient(rgb(6, 200, 249) 0%, rgb(9, 164, 241) 25%, rgb(10, 134, 235) 50%, rgb(12, 100, 233) 75%, rgb(13, 67, 227) 100%)',
@@ -105,7 +117,7 @@ const loadLocationPage = () => {
 
         const locationHeader = () => {
                 const head = createElement('section', ['location-head']);
-                const con = createElement('div', ['loading', 'card'], 'main-info');
+                const con = createElement('div', ['card'], 'main-info');
                 const d = createElement('p', ['loading', 'text'], 'date-field', '');
                 const t = createElement('p', ['loading', 'text'], 'time-field', '');
                 const l = createElement('p', ['loading', 'text'], 'location-field',  '' );
@@ -118,12 +130,12 @@ const loadLocationPage = () => {
         const currentWeather = () => {
                 const s = createElement('section', ['location-body']);
                 const figure = createElement('figure', ['icon-container']);
-                const i = createElement('img', ['loading', 'image'], 'weather-icon');
+                const i = createElement('img', ['loading', 'image', 'icon'], 'weather-icon');
 
                 const tempCon = createElement('div', [], 'temp-container');
-                const maxTemp = createElement('p', ['loading', 'card'], 'max-temp');
-                const currentTemp = createElement('p', ['loading', 'card'], 'current-temp');
-                const minTemp = createElement('p', ['loading', 'card'], 'min-temp');
+                const maxTemp = createElement('div', ['loading', 'card'], 'max-temp');
+                const currentTemp = createElement('div', ['loading', 'card'], 'current-temp');
+                const minTemp = createElement('div', ['loading', 'card'], 'min-temp');
 
                 tempCon.append(minTemp, currentTemp, maxTemp);
                 figure.append(i);
@@ -156,6 +168,7 @@ export function renderOptions(options){
                 locationList.style.opacity = 0;
                 if (!options.length) {
                         locationList.appendChild(createElement('p', [],'no-locations', 'No locations found...'));
+                        locationList.style.opacity = 1;
                         return;
                 }
                 for (const option of options) {
@@ -167,8 +180,7 @@ export function renderOptions(options){
                                 updateRecentLocations(updatedState);
                                 main.append(loadLocationPage());
                                 await loadWeather();
-
-                                console.log(state);
+                                showWeatherData();
                         });
                         op.dataset.locationName = `${option.city}, ${option.state}`
                         op.dataset.lat = option.lat;
@@ -179,6 +191,11 @@ export function renderOptions(options){
         } catch (err) {
                 console.error({c: err.code, m: err.message})
         }
+}
+
+function showWeatherData(){
+        console.log(state);
+        const date = document.querySelector('#date-field').textContent = 'today';
 }
 
 function createElement(type, classes = [], id = null, text = null){

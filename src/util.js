@@ -82,7 +82,6 @@ export async function loadWeather(){
         const res = await fetch(url + location + key);
         if (!res.ok) throw new Error(`Weather request failed ${res.status}`);
         const data = await res.json();
-        console.log(data);
         buildWeatherData(data);
     } catch (err) {
         console.error({c: err.code, m: err.message});
@@ -110,4 +109,9 @@ export function updateRecentLocations(){
         [state.location.name]: [state.location.longitude, state.location.latitude]
     });
     return {...state}
+}
+
+export const formatDate = (date) => {
+    const [year, month, day] = date.split('-').map(Number);
+    return new Intl.DateTimeFormat('en-US', {month: 'long', day: 'numeric', year: 'numeric'}).format(new Date(year, month - 1, day));
 }
