@@ -3,7 +3,10 @@ export const state =  {
         name: null,
         latitude: null,
         longitude: null,
-        weatherData: {}
+        data: {
+            current: {},
+            future: {},
+        },
     },
     recentLocations: [],
     savedLocations: {},

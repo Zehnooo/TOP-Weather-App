@@ -1,7 +1,7 @@
 import "./reset.css"
 import "./styles.css";
 import  { state }  from './state.js';
-import {collectInput, saveLocation, loadWeather, updateRecentLocations, formatDate} from './util.js';
+import {collectInput, saveLocation, loadWeather, updateRecentLocations, formatDate, lookupCoordinates} from './util.js';
 import { locationModule } from "./location.js";
 
 import rain  from './images/cloud-rain.svg';
@@ -65,10 +65,14 @@ const homePage = () => {
                 locationButton.setAttribute('appearance', 'outlined')
                 locationButton.addEventListener('click', async ()  => {
                         try {
+                                locationButton.textContent = 'Locating...';
                                 const res = await locationModule();
                                 state.location.latitude = res.latitude;
                                 state.location.longitude = res.longitude;
-
+                                await lookupCoordinates();
+                                main.append(loadLocationPage());
+                                const results = await loadWeather();
+                                showWeatherData(results);
                         } catch (err) {
                                 console.error({code: err.code, msg: err.message});
                         }
@@ -179,8 +183,8 @@ export function renderOptions(options){
                                 const updatedState = saveLocation(e);
                                 updateRecentLocations(updatedState);
                                 main.append(loadLocationPage());
-                                await loadWeather();
-                                showWeatherData();
+                                const results = await loadWeather();
+                                showWeatherData(results);
                         });
                         op.dataset.locationName = `${option.city}, ${option.state}`
                         op.dataset.lat = option.lat;
@@ -193,9 +197,36 @@ export function renderOptions(options){
         }
 }
 
-function showWeatherData(){
-        console.log(state);
-        const date = document.querySelector('#date-field').textContent = 'today';
+function showWeatherData() {
+
+        const d = state.location.data;
+        const { current, future } = d;
+        console.log(JSON.stringify(current, null, 2));
+
+        const dateField = resolveElement('#date-field', ['loading'], [], String(formatDate(new Date(current.datetimeEpoch * 1000))));
+}
+
+function resolveElement( selector, remClasses = [], addClasses = [], value = null ) {
+        const el = document.querySelector(`${String(selector)}`);
+        console.log(el);
+        if (!el) {
+                console.error('missing element');
+        }
+        if (remClasses.length > 0) {
+                for (const c of remClasses){
+                        el.classList.remove(c);
+                }
+        }
+
+        if (addClasses.length > 0) {
+                for (const c of addClasses) {
+                        el.classList.add('c');
+                }
+        }
+
+        if (value !== null || value !== '') el.textContent = value;
+
+        return el;
 }
 
 function createElement(type, classes = [], id = null, text = null){

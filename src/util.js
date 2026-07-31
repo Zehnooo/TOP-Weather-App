@@ -26,6 +26,16 @@ export function collectInput(e){
     }, 400);
 }
 
+export async function lookupCoordinates(){
+    const latitude = state.location.latitude;
+    const longitude = state.location.longitude;
+    const key = '0f58d943e6024be9a1688b56a1543cbf';
+    const url = `https://api.geoapify.com/v1/geocode/reverse?lat=${latitude}&lon=${longitude}&apiKey=${key}`;
+    const res = await fetch(url);
+    const data = await res.json();
+    state.location.name = `${data.features[0].properties.city}, ${data.features[0].properties.state}`
+}
+
 async function findLocationOptions(location) {
     activeRequest?.abort();
     activeRequest = new AbortController();
@@ -82,7 +92,9 @@ export async function loadWeather(){
         const res = await fetch(url + location + key);
         if (!res.ok) throw new Error(`Weather request failed ${res.status}`);
         const data = await res.json();
-        buildWeatherData(data);
+        console.log('raw data: ', data);
+        return buildWeatherData(data);
+
     } catch (err) {
         console.error({c: err.code, m: err.message});
     }
@@ -91,10 +103,13 @@ export async function loadWeather(){
 }
 
 function buildWeatherData(data){
-    state.location.weatherData = data?.days
+    const today = data?.currentConditions;
+    const remaining = data?.days
         .map(({ datetime, description, temp, tempmax, tempmin, feelslike, hours, humidity, precip, sunrise, sunset }) => ({
             date: datetime, desc: description, temp: temp, maxTemp: tempmax, minTemp: tempmin, feelsTemp: feelslike, hours, humid: humidity, precip, sunrise, sunset
         }));
+    state.location.data.current = today;
+    state.location.data.future = remaining;
 }
 
 
@@ -112,6 +127,5 @@ export function updateRecentLocations(){
 }
 
 export const formatDate = (date) => {
-    const [year, month, day] = date.split('-').map(Number);
-    return new Intl.DateTimeFormat('en-US', {month: 'long', day: 'numeric', year: 'numeric'}).format(new Date(year, month - 1, day));
+    return new Intl.DateTimeFormat('en-US', {month: 'long', day: 'numeric', year: 'numeric'}).format(new Date(date));
 }
