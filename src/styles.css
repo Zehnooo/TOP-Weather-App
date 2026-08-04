@@ -292,7 +292,7 @@ footer {
 }
 
 .location-body {
-    justify-content: space-around;
+    justify-content: space-between;
 }
 
 .location-footer {
@@ -308,7 +308,7 @@ footer {
 
 .icon-container {
     align-items: center;
-    max-width: 400px;
+    max-width: 150px;
 }
 
 .icon-container .icon {

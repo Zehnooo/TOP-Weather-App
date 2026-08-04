@@ -6,7 +6,8 @@ import partlyCloudyNight from './images/partly-cloudy-night.svg';
 import sunrise  from './images/sunrise.svg';
 import sunset  from './images/sunset.svg';
 import high from './images/temp-high.svg';
-import low from './images/temp-low.svg'
+import low from './images/temp-low.svg';
+import current from './images/temp-current.svg';
 import clearDay  from './images/clear-day.svg';
 import clearNight from './images/clear-night.svg';
 
@@ -23,7 +24,7 @@ const icons = {
     sunset,
     high,
     low,
-
+    current,
 }
 
 export const resolveIcon = (iconText) => {

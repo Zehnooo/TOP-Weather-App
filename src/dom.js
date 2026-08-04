@@ -181,12 +181,45 @@ function showWeatherData() {
 
         const d = state.location.data;
         const { current, future } = d;
+        const today = future[0];
+        console.log(today);
         console.log(JSON.stringify(current, null, 2));
 
         const dateField = resolveElement('#date-field', ['loading'], [], String(formatDate(new Date(current.datetimeEpoch * 1000))));
 
+        // add time field
+
+        const locationField = resolveElement('#location-field', ['loading'], [], String(state.location.name));
+
         const icon = resolveElement('#weather-icon', ['loading'], [], null);
                 icon.src = resolveIcon(String(current.icon));
+
+        const tempContainer = document.querySelector('#temp-container');
+        const temps = tempContainer.querySelectorAll('.loading');
+        temps.forEach(temp => {
+                const references = {
+                        displayNames: {
+                                'min-temp': 'Low',
+                                'current-temp': 'Current',
+                                'max-temp': 'High',
+                        },
+                        dataNames: {
+                                'min-temp': 'minTemp',
+                                'current-temp': 'temp',
+                                'max-temp': 'maxTemp',
+                        }
+                }
+
+                const id = temp.id;
+                console.log('id', id);
+                const name = references.displayNames[id];
+                const display = createElement('p', [], `${id}-display`, `${String(today[references.dataNames[id]])}`);
+                const icon = document.createElement('img');
+                icon.src = resolveIcon(String(name.toLowerCase()));
+                temp.append(icon, display);
+                temp.classList.remove('loading');
+        });
+
 }
 
 function resolveElement( selector, remClasses = [], addClasses = [], value = null ) {
