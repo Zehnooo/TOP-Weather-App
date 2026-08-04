@@ -3,30 +3,10 @@ import "./styles.css";
 import  { state }  from './state.js';
 import {collectInput, saveLocation, loadWeather, updateRecentLocations, formatDate, lookupCoordinates} from './util.js';
 import { locationModule } from "./location.js";
+import { resolveIcon } from "./icons.js";
 
-import rain  from './images/cloud-rain.svg';
-import snow  from './images/cloud-snow.svg';
-import cloudy from './images/cloudy.svg';
-import partlyCloudy from './images/partly-cloudy.svg';
-import sunrise  from './images/sunrise.svg';
-import sunset  from './images/sunset.svg';
-import high from './images/temp-high.svg';
-import low from './images/temp-low.svg'
-import sunny  from './images/sun.svg';
-import defaultIcon  from './images/default.svg';
 
 const main = document.querySelector('#root');
-
-const resolveIcon = (desc) => {
-        let s = desc.toLowerCase();
-        if (s.includes('partly cloudy')) { return partlyCloudy; }
-        if (s.includes('cloudy') && !s.includes('partly cloudy')) { return cloudy; }
-        if (s.includes('sunny')) { return sunny }
-        if (s.includes('snow')) { return snow }
-        if (s.includes('rain')) { return rain }
-
-        return defaultIcon;
-}
 
 const bg = {
        blue: 'linear-gradient(rgb(6, 200, 249) 0%, rgb(9, 164, 241) 25%, rgb(10, 134, 235) 50%, rgb(12, 100, 233) 75%, rgb(13, 67, 227) 100%)',
@@ -204,6 +184,9 @@ function showWeatherData() {
         console.log(JSON.stringify(current, null, 2));
 
         const dateField = resolveElement('#date-field', ['loading'], [], String(formatDate(new Date(current.datetimeEpoch * 1000))));
+
+        const icon = resolveElement('#weather-icon', ['loading'], [], null);
+                icon.src = resolveIcon(String(current.icon));
 }
 
 function resolveElement( selector, remClasses = [], addClasses = [], value = null ) {
