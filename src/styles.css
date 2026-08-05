@@ -282,10 +282,18 @@ footer {
     height: 100%;
     width: 100%;
     align-items: center;
+    padding: .4rem .6rem;
 }
 
-.location-head div p {
+.location-head-dt {
+    display: flex;
+    flex-direction: row;
+    gap: .6rem;
+}
+
+.location-head-dt p {
     height: 100%;
+
 }
 
 .location-head #main-info .loading.text {
@@ -305,6 +313,19 @@ footer {
     min-height: 75px;
     gap: .6rem;
     display: flex;
+    flex-direction: column;
+    width: 100%;
+}
+
+
+.temp-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    box-shadow: var(--sm-shdw);
+    padding: .8rem;
+    border-radius: .4rem;
 }
 
 .icon-container {
@@ -329,6 +350,7 @@ footer {
     justify-content: center;
     gap: .6rem;
     width: 100%;
+    padding: .4rem .8rem;
 }
 
 .future-day {

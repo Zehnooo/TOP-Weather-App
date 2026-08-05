@@ -77,16 +77,7 @@ const homePage = () => {
                                 state.location.longitude = res.longitude;
                                 await lookupCoordinates();
                                 main.append(loadLocationPage());
-                                const overlay = loadingOverlay.create();
-                                document.body.append(overlay);
-                                loadingOverlay.toggle(overlay);
-                                setTimeout(async () => {
-                                        const results = await loadWeather();
-                                        loadingOverlay.toggle(overlay);
-                                        showWeatherData(results);
-                                        document.querySelector('#content').style.opacity = '1';
-                                }, 3000);
-
+                                renderWeather();
                         } catch (err) {
                                 console.error({code: err.code, msg: err.message});
                         }
@@ -99,6 +90,18 @@ const homePage = () => {
                 inpDiv.append(f, locationButton);
                 con.append(inpDiv);
                 return con;
+}
+
+function renderWeather(){
+        const overlay = loadingOverlay.create();
+        document.body.append(overlay);
+        loadingOverlay.toggle(overlay);
+        setTimeout(async () => {
+                const results = await loadWeather();
+                loadingOverlay.toggle(overlay);
+                showWeatherData(results);
+                document.querySelector('#content').style.opacity = '1';
+        }, 3000);
 }
 
 const globalHeader = () => {
@@ -127,39 +130,40 @@ const loadLocationPage = () => {
         con.style.opacity = '0';
         const locationHeader = () => {
                 const head = createElement('section', ['location-head']);
-                const con = createElement('wa-card', ['card-header'], 'main-info');
+                const con = createElement('div', ['card-header'], 'main-info');
+                const dateTime = createElement('div', ['location-head-dt']);
                 const d = createElement('p', ['text'], 'date-field', '');
+                const dot = createElement('p', ['divider'], null, '\u00B7');
                 const t = createElement('p', [ 'text'], 'time-field', '');
                 const l = createElement('h2', [ 'text'], 'location-field',  '' );
+                const figure = createElement('figure', ['icon-container']);
+                const i = createElement('img', [ 'image', 'icon'], 'weather-icon');
+                const desc = createElement('h3', [ 'text'], 'weather-desc');
 
-                con.setAttribute('appearance', 'plain');
-                l.setAttribute('slot', 'header');
-
-                con.append(d, t, l);
+                figure.append(i);
+                dateTime.append(d, dot, t);
+                con.append(dateTime, l, figure, desc);
                 head.append(con);
                 return head;
         }
 
         const currentWeather = () => {
                 const s = createElement('section', ['location-body']);
-                const figure = createElement('figure', ['icon-container']);
-                const i = createElement('img', [ 'image', 'icon'], 'weather-icon');
-                const desc = createElement('h3', [ 'text'], 'weather-desc');
+
 
                 const tempCon = createElement('div', [], 'temp-container');
-                const maxTemp = createElement('div', [ 'card'], 'max-temp');
-                const currentTemp = createElement('div', [ 'card'], 'current-temp');
-                const minTemp = createElement('div', [ 'card'], 'min-temp');
+                const maxTemp = createElement('div', ['temp-card'], 'max-temp');
+                const currentTemp = createElement('div', ['temp-card'], 'current-temp');
+                const minTemp = createElement('div', ['temp-card'], 'min-temp');
 
                 tempCon.append(minTemp, currentTemp, maxTemp);
-                figure.append(i);
-                s.append(figure, desc, tempCon);
+
+                s.append(tempCon);
                 return s;
         }
         const futureWeather = () => {
                 const s = createElement('section', ['location-footer']);
-                const futureCon = createElement('wa-card', [], 'future-weather');
-                        futureCon.setAttribute('orientation', 'horizontal');
+                const futureCon = createElement('div', [], 'future-weather');
                 const row = createElement('div', [], 'future-day-row');
                 const d1 = createElement('div', [ 'card', 'future-day'], 'd1');
                 const d2 = createElement('div', [ 'card', 'future-day'], 'd2');
@@ -195,8 +199,7 @@ export function renderOptions(options){
                                 const updatedState = saveLocation(e);
                                 updateRecentLocations(updatedState);
                                 main.append(loadLocationPage());
-                                const results = await loadWeather();
-                                showWeatherData(results);
+                                renderWeather();
                         });
                         op.dataset.locationName = `${option.city}, ${option.state}`
                         op.dataset.lat = option.lat;
@@ -264,7 +267,7 @@ function resolveFutureElements(futureData){
 
 function resolveTempElements(today){
         const tempContainer = document.querySelector('#temp-container');
-        const temps = tempContainer.querySelectorAll('.loading');
+        const temps = tempContainer.querySelectorAll('div');
         temps.forEach(temp => {
                 const references = {
                         displayNames: {
@@ -286,7 +289,7 @@ function resolveTempElements(today){
                 const icon = document.createElement('img');
                 icon.src = resolveIcon(String(name.toLowerCase()));
                 temp.append(title, icon, display);
-                temp.classList.remove('loading');
+
         });
 }
 
