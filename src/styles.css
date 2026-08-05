@@ -244,10 +244,9 @@ footer {
 }
 
 .location-con {
-    justify-content: flex-start;
+    justify-content: space-evenly;
     overflow-y: auto;
-    background: rgba(255, 255, 255, .4);
-    opacity: .6;
+    background: rgba(255, 255, 255, .2);
     border-radius: .6rem;
 }
 
@@ -267,6 +266,7 @@ footer {
     width: 100%;
     padding: .6rem;
     max-width: 800px;
+    max-height: fit-content;
 }
 
 .location-head {
@@ -318,11 +318,43 @@ footer {
 }
 
 #future-weather {
+    width: 100%;
     display: flex;
-    gap: .6rem;
 }
 
-#future-weather > div {
-    max-width: 125px;
+#future-day-row {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    gap: .6rem;
     width: 100%;
+}
+
+.future-day {
+    padding: .8rem;
+}
+
+.future-day:not(:last-child) {
+    border-right: 2px solid black;
+}
+
+.future-day-date {
+    text-wrap: nowrap;
+    text-align: center;
+    width: 100%;
+}
+
+.loading-overlay {
+    position: fixed;   /* Stays in place during scroll */
+    top: 0;
+    left: 0;
+    width: 100%;       /* Full window width */
+    height: 100%;      /* Full window height */
+    background-color: rgba(0, 0, 0, 0.5); /* Black with 50% opacity */
+    z-index: 9999;     /* Puts it on top of everything else */
+    display: flex;     /* Centers content inside */
+    justify-content: center;
+    align-items: center;
+    color: white;
 }

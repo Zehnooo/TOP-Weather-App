@@ -29,6 +29,18 @@ export function initDom () {
                 return null;
 }
 
+const loadingOverlay = {
+        create() {
+                const overlay = createElement('div', ['loading-overlay', 'hide']);
+                const text = createElement('h2', ['loading-text'], null, 'Loading...');
+                overlay.append(text);
+                return overlay;
+        },
+        toggle(overlay) {
+                overlay.classList.contains('hide') ? overlay.classList.remove('hide') : overlay.remove();
+        }
+}
+
 const homePage = () => {
         const con = createElement('div', ['home-con'], 'content');
 
@@ -59,8 +71,16 @@ const homePage = () => {
                                 state.location.longitude = res.longitude;
                                 await lookupCoordinates();
                                 main.append(loadLocationPage());
-                                const results = await loadWeather();
-                                showWeatherData(results);
+                                const overlay = loadingOverlay.create();
+                                document.body.append(overlay);
+                                loadingOverlay.toggle(overlay);
+                                setTimeout(async () => {
+                                        const results = await loadWeather();
+                                        loadingOverlay.toggle(overlay);
+                                        showWeatherData(results);
+                                        document.querySelector('#content').style.opacity = '1';
+                                }, 3000);
+
                         } catch (err) {
                                 console.error({code: err.code, msg: err.message});
                         }
@@ -98,13 +118,13 @@ const globalFooter = () => {
 const loadLocationPage = () => {
         main.replaceChildren();
         const con = createElement('div', ['location-con'], 'content');
-
+        con.style.opacity = '0';
         const locationHeader = () => {
                 const head = createElement('section', ['location-head']);
                 const con = createElement('wa-card', ['card-header'], 'main-info');
-                const d = createElement('p', ['loading', 'text'], 'date-field', '');
-                const t = createElement('p', ['loading', 'text'], 'time-field', '');
-                const l = createElement('h2', ['loading', 'text'], 'location-field',  '' );
+                const d = createElement('p', ['text'], 'date-field', '');
+                const t = createElement('p', [ 'text'], 'time-field', '');
+                const l = createElement('h2', [ 'text'], 'location-field',  '' );
 
                 con.setAttribute('appearance', 'plain');
                 l.setAttribute('slot', 'header');
@@ -117,13 +137,13 @@ const loadLocationPage = () => {
         const currentWeather = () => {
                 const s = createElement('section', ['location-body']);
                 const figure = createElement('figure', ['icon-container']);
-                const i = createElement('img', ['loading', 'image', 'icon'], 'weather-icon');
-                const desc = createElement('h3', ['loading', 'text'], 'weather-desc');
+                const i = createElement('img', [ 'image', 'icon'], 'weather-icon');
+                const desc = createElement('h3', [ 'text'], 'weather-desc');
 
                 const tempCon = createElement('div', [], 'temp-container');
-                const maxTemp = createElement('div', ['loading', 'card'], 'max-temp');
-                const currentTemp = createElement('div', ['loading', 'card'], 'current-temp');
-                const minTemp = createElement('div', ['loading', 'card'], 'min-temp');
+                const maxTemp = createElement('div', [ 'card'], 'max-temp');
+                const currentTemp = createElement('div', [ 'card'], 'current-temp');
+                const minTemp = createElement('div', [ 'card'], 'min-temp');
 
                 tempCon.append(minTemp, currentTemp, maxTemp);
                 figure.append(i);
@@ -132,14 +152,17 @@ const loadLocationPage = () => {
         }
         const futureWeather = () => {
                 const s = createElement('section', ['location-footer']);
-                const futureCon = createElement('div', [], 'future-weather');
-                const d1 = createElement('div', ['loading', 'card', 'future-day'], 'd1');
-                const d2 = createElement('div', ['loading', 'card', 'future-day'], 'd2');
-                const d3 = createElement('div', ['loading', 'card', 'future-day'], 'd3');
-                const d4 = createElement('div', ['loading', 'card', 'future-day'], 'd4');
-                const d5 = createElement('div', ['loading', 'card', 'future-day'], 'd5');
+                const futureCon = createElement('wa-card', [], 'future-weather');
+                        futureCon.setAttribute('orientation', 'horizontal');
+                const row = createElement('div', [], 'future-day-row');
+                const d1 = createElement('div', [ 'card', 'future-day'], 'd1');
+                const d2 = createElement('div', [ 'card', 'future-day'], 'd2');
+                const d3 = createElement('div', [ 'card', 'future-day'], 'd3');
+                const d4 = createElement('div', [ 'card', 'future-day'], 'd4');
+                const d5 = createElement('div', [ 'card', 'future-day'], 'd5');
 
-                futureCon.append(d1, d2, d3, d4, d5);
+                row.append(d1, d2, d3, d4, d5);
+                futureCon.append(row);
                 s.append(futureCon);
                 return s;
         }
