@@ -31,9 +31,15 @@ export function initDom () {
 
 const loadingOverlay = {
         create() {
+                const current = window.getComputedStyle(document.body).backgroundImage;
+                const spinnerClass = current === bg.blue ? 'blue' : 'purple';
+
                 const overlay = createElement('div', ['loading-overlay', 'hide']);
                 const text = createElement('h2', ['loading-text'], null, 'Loading...');
-                overlay.append(text);
+                const spinner = createElement('div', ['loading-spinner', `${spinnerClass}`]);
+
+
+                overlay.append(text, spinner);
                 return overlay;
         },
         toggle(overlay) {
