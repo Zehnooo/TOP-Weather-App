@@ -1,7 +1,15 @@
 import "./reset.css"
 import "./styles.css";
 import  { state }  from './state.js';
-import {collectInput, saveLocation, loadWeather, updateRecentLocations, formatDate, lookupCoordinates} from './util.js';
+import {
+        collectInput,
+        saveLocation,
+        loadWeather,
+        updateRecentLocations,
+        formatDate,
+        lookupCoordinates,
+        formatTime
+} from './util.js';
 import { locationModule } from "./location.js";
 import { resolveIcon } from "./icons.js";
 
@@ -9,7 +17,7 @@ import { resolveIcon } from "./icons.js";
 const main = document.querySelector('#root');
 
 const bg = {
-       blue: 'linear-gradient(rgb(6, 200, 249) 0%, rgb(9, 164, 241) 25%, rgb(10, 134, 235) 50%, rgb(12, 100, 233) 75%, rgb(13, 67, 227) 100%)',
+        blue: 'linear-gradient(rgb(6, 200, 249) 0%, rgb(9, 164, 241) 25%, rgb(10, 134, 235) 50%, rgb(12, 100, 233) 75%, rgb(13, 67, 227) 100%)',
         purple: 'linear-gradient(135deg, rgb(234, 152, 218), rgb(210, 145, 223), rgb(186, 137, 228), rgb(163, 130, 234), rgb(139, 123, 239), rgb(115, 115, 244), rgb(91, 108, 249))',
 }
 
@@ -82,29 +90,24 @@ const globalFooter = () => {
                 bgSwitch.innerHTML = '<svg width="64px" height="64px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <path d="M9 3V7M15 3V6M4 10H20M12 21C10.2337 21 8.91561 19.3737 9.28133 17.6457L9.34332 17.3528C9.56076 16.3254 9.04388 15.2832 8.09439 14.8346L5.9897 13.8401C4.77487 13.2661 4 12.043 4 10.6994V4.63149C4 3.73044 4.73044 3 5.63149 3H18.3685C19.2696 3 20 3.73044 20 4.63149V10.6994C20 12.043 19.2251 13.2661 18.0103 13.8401L15.9056 14.8346C14.9561 15.2832 14.4392 16.3254 14.6567 17.3528L14.7187 17.6457C15.0844 19.3737 13.7663 21 12 21Z" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path> </g></svg>';
                 bgSwitch.addEventListener('click', changeBg);
 
-        const testButton = createElement('button', ['btn'], 'test-button', 'Tester');
-        testButton.addEventListener('click', () => {
-                main.append(loadLocationPage());
-        })
-
-        tools.append(bgSwitch, testButton);
+        tools.append(bgSwitch);
         f.append(tools);
         return f;
 }
 
 const loadLocationPage = () => {
         main.replaceChildren();
-
         const con = createElement('div', ['location-con'], 'content');
-        const { location } = state;
-        console.log(location);
 
         const locationHeader = () => {
                 const head = createElement('section', ['location-head']);
-                const con = createElement('div', ['card'], 'main-info');
+                const con = createElement('wa-card', ['card-header'], 'main-info');
                 const d = createElement('p', ['loading', 'text'], 'date-field', '');
                 const t = createElement('p', ['loading', 'text'], 'time-field', '');
-                const l = createElement('p', ['loading', 'text'], 'location-field',  '' );
+                const l = createElement('h2', ['loading', 'text'], 'location-field',  '' );
+
+                con.setAttribute('appearance', 'plain');
+                l.setAttribute('slot', 'header');
 
                 con.append(d, t, l);
                 head.append(con);
@@ -115,6 +118,7 @@ const loadLocationPage = () => {
                 const s = createElement('section', ['location-body']);
                 const figure = createElement('figure', ['icon-container']);
                 const i = createElement('img', ['loading', 'image', 'icon'], 'weather-icon');
+                const desc = createElement('h3', ['loading', 'text'], 'weather-desc');
 
                 const tempCon = createElement('div', [], 'temp-container');
                 const maxTemp = createElement('div', ['loading', 'card'], 'max-temp');
@@ -123,12 +127,12 @@ const loadLocationPage = () => {
 
                 tempCon.append(minTemp, currentTemp, maxTemp);
                 figure.append(i);
-                s.append(figure, tempCon);
+                s.append(figure, desc, tempCon);
                 return s;
         }
         const futureWeather = () => {
                 const s = createElement('section', ['location-footer']);
-                const futureCon = createElement('div', ['future-weather']);
+                const futureCon = createElement('div', [], 'future-weather');
                 const d1 = createElement('div', ['loading', 'card', 'future-day'], 'd1');
                 const d2 = createElement('div', ['loading', 'card', 'future-day'], 'd2');
                 const d3 = createElement('div', ['loading', 'card', 'future-day'], 'd3');
@@ -156,7 +160,6 @@ export function renderOptions(options){
                         return;
                 }
                 for (const option of options) {
-                        console.log("formatted option", option);
                         const op = createElement('p', ['home-el'], 'location-found', String(`${option.city}, ${option.state}`));
                         op.addEventListener('click', async (e) => {
                                 locationList.style.opacity = 0;
@@ -182,18 +185,55 @@ function showWeatherData() {
         const d = state.location.data;
         const { current, future } = d;
         const today = future[0];
-        console.log(today);
-        console.log(JSON.stringify(current, null, 2));
 
-        const dateField = resolveElement('#date-field', ['loading'], [], String(formatDate(new Date(current.datetimeEpoch * 1000))));
+        console.log('Current Data: ', JSON.stringify(current, null, 1));
+        console.log("Today's Data: ", JSON.stringify(today, null, 1));
+        const dateField = resolveElement('#date-field', ['loading'], [], String(formatDate(new Date(current.datetimeEpoch * 1000), 'epoch')));
 
-        // add time field
+        const timeField = resolveElement('#time-field', ['loading'], [], `As of ${String(formatTime(current.datetime))}`);
 
         const locationField = resolveElement('#location-field', ['loading'], [], String(state.location.name));
 
         const icon = resolveElement('#weather-icon', ['loading'], [], null);
                 icon.src = resolveIcon(String(current.icon));
 
+        const desc = resolveElement('#weather-desc', ['loading'], [], today.desc);
+
+        resolveTempElements(today);
+        resolveFutureElements(future);
+}
+
+function resolveFutureElements(futureData){
+        for (let i = 1; i <= 5; i++){
+                const data = futureData[i];
+                const id = `#d${i}`
+                const day = document.querySelector(String(id));
+                const date = createElement('p', ['future-day-date'], null, formatDate(data.date, 'string'));
+                const minTemp = createElement('p', ['future-day-low'], null, String(`Low: ${data.minTemp}\u00B0`));
+                const maxTemp = createElement('p', ['future-day-high'], null, String(`High: ${data.maxTemp}\u00B0`));
+                console.log(date || null);
+                console.log(JSON.stringify(data, null, 2));
+                day.append(date, minTemp, maxTemp);
+                day.classList.remove('loading');
+
+        }
+
+        /*
+        {
+  "date": "2026-08-06",
+  "desc": "Partly cloudy throughout the day.",
+  "temp": 72.2,
+  "maxTemp": 74,
+  "minTemp": 70.1,
+  "feelsTemp": 72.2,
+  "precip": 0.91,
+  "sunrise": "05:49:30",
+  "sunset": "20:02:45"
+}
+         */
+}
+
+function resolveTempElements(today){
         const tempContainer = document.querySelector('#temp-container');
         const temps = tempContainer.querySelectorAll('.loading');
         temps.forEach(temp => {
@@ -211,20 +251,18 @@ function showWeatherData() {
                 }
 
                 const id = temp.id;
-                console.log('id', id);
                 const name = references.displayNames[id];
-                const display = createElement('p', [], `${id}-display`, `${String(today[references.dataNames[id]])}`);
+                const title = createElement('p', [], `${id}-title`, String(name));
+                const display = createElement('p', [], `${id}-display`, `${String(today[references.dataNames[id]])}\u00B0`);
                 const icon = document.createElement('img');
                 icon.src = resolveIcon(String(name.toLowerCase()));
-                temp.append(icon, display);
+                temp.append(title, icon, display);
                 temp.classList.remove('loading');
         });
-
 }
 
 function resolveElement( selector, remClasses = [], addClasses = [], value = null ) {
         const el = document.querySelector(`${String(selector)}`);
-        console.log(el);
         if (!el) {
                 console.error('missing element');
         }

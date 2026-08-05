@@ -105,8 +105,8 @@ export async function loadWeather(){
 function buildWeatherData(data){
     const today = data?.currentConditions;
     const remaining = data?.days
-        .map(({ datetime, description, temp, tempmax, tempmin, feelslike, hours, humidity, precip, sunrise, sunset }) => ({
-            date: datetime, desc: description, temp: temp, maxTemp: tempmax, minTemp: tempmin, feelsTemp: feelslike, hours, humid: humidity, precip, sunrise, sunset
+        .map(({ datetime, description, temp, tempmax, tempmin, feelslike, precip, sunrise, sunset }) => ({
+            date: datetime, desc: description, temp: temp, maxTemp: tempmax, minTemp: tempmin, feelsTemp: feelslike, precip, sunrise, sunset
         }));
     state.location.data.current = today;
     state.location.data.future = remaining;
@@ -126,6 +126,18 @@ export function updateRecentLocations(){
     return {...state}
 }
 
-export const formatDate = (date) => {
-    return new Intl.DateTimeFormat('en-US', {month: 'long', day: 'numeric', year: 'numeric'}).format(new Date(date));
+export const formatDate = (date, type) => {
+    switch(type){
+        case 'epoch':
+            return new Intl.DateTimeFormat('en-US', {month: 'long', day: 'numeric', year: 'numeric'}).format(new Date(date));
+        case 'string':
+            const [year, month, day] = date.split('-');
+            return new Intl.DateTimeFormat('en-US', {month: 'long', day: 'numeric', year: 'numeric'}).format(new Date(year, month - 1, day));
+    }
+}
+
+export const formatTime = (time) => {
+    const [hours, minutes, seconds] = time.split(":");
+    const designator = hours > 12 ? "PM" : "AM";
+    return `${hours}:${minutes} ${designator}`;
 }

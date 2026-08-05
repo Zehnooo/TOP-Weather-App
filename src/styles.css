@@ -270,7 +270,8 @@ footer {
 }
 
 .location-head {
-    justify-content: center;
+    justify-content: start;
+    max-height: fit-content;
 }
 
 .location-head #main-info {
@@ -292,7 +293,7 @@ footer {
 }
 
 .location-body {
-    justify-content: space-between;
+    justify-content: space-evenly;
 }
 
 .location-footer {
@@ -316,11 +317,12 @@ footer {
     height: 100%;
 }
 
-.future-weather {
+#future-weather {
     display: flex;
     gap: .6rem;
 }
 
-.future-weather > div {
+#future-weather > div {
     max-width: 125px;
+    width: 100%;
 }
