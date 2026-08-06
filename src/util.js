@@ -139,5 +139,6 @@ export const formatDate = (date, type) => {
 export const formatTime = (time) => {
     const [hours, minutes, seconds] = time.split(":");
     const designator = hours > 12 ? "PM" : "AM";
-    return `${hours}:${minutes} ${designator}`;
+    let formattedHours = hours > 12 ? hours - 12 : hours;
+    return `${formattedHours}:${minutes} ${designator}`;
 }

@@ -151,19 +151,25 @@ const loadLocationPage = () => {
                 const s = createElement('section', ['location-body']);
 
 
-                const tempCon = createElement('div', [], 'temp-container');
+                const tempCon = createElement('div', ['glass-bg'], 'temp-container');
                 const maxTemp = createElement('div', ['temp-card'], 'max-temp');
                 const currentTemp = createElement('div', ['temp-card'], 'current-temp');
                 const minTemp = createElement('div', ['temp-card'], 'min-temp');
 
-                tempCon.append(minTemp, currentTemp, maxTemp);
+                const sunCon = createElement('div', ['glass-bg'], 'sun-container');
+                const sunrise = createElement('div', ['sun-card'], 'sunrise');
+                const sunset = createElement('div', ['sun-card'], 'sunset');
 
-                s.append(tempCon);
+
+                tempCon.append(minTemp, currentTemp, maxTemp);
+                sunCon.append(sunrise, sunset);
+                s.append(tempCon, sunCon);
                 return s;
         }
         const futureWeather = () => {
                 const s = createElement('section', ['location-footer']);
-                const futureCon = createElement('div', [], 'future-weather');
+                const futureCon = createElement('div', ['glass-bg'], 'future-weather');
+                const title = createElement('h4', ['future-title'], null, 'Next 5 Days');
                 const row = createElement('div', [], 'future-day-row');
                 const d1 = createElement('div', [ 'card', 'future-day'], 'd1');
                 const d2 = createElement('div', [ 'card', 'future-day'], 'd2');
@@ -172,7 +178,7 @@ const loadLocationPage = () => {
                 const d5 = createElement('div', [ 'card', 'future-day'], 'd5');
 
                 row.append(d1, d2, d3, d4, d5);
-                futureCon.append(row);
+                futureCon.append(title, row);
                 s.append(futureCon);
                 return s;
         }
@@ -220,6 +226,34 @@ function showWeatherData() {
 
         console.log('Current Data: ', JSON.stringify(current, null, 1));
         console.log("Today's Data: ", JSON.stringify(today, null, 1));
+
+        resolveHeadElements(current, today);
+        resolveBodyElements(current, today);
+        resolveFooterElements(future);
+}
+
+function resolveFooterElements(futureData){
+        for (let i = 1; i <= 5; i++){
+                const data = futureData[i];
+                const id = `#d${i}`
+                const day = document.querySelector(String(id));
+                const date = createElement('p', ['future-day-date'], null, formatDate(data.date, 'string').replace(', 2026', ''));
+
+                const minLabel = createElement('span', ['future-day-label', 'low'], null, 'Low');
+                const minTemp = createElement('p', ['future-day-low', 'future-day-text'], null, String(`${data.minTemp}\u00B0`));
+                minTemp.prepend(minLabel);
+
+                const maxLabel = createElement('span', ['future-day-label', 'high'], null, 'High');
+                const maxTemp = createElement('p', ['future-day-high', 'future-day-text'], null, String(`${data.maxTemp}\u00B0`));
+                maxTemp.prepend(maxLabel);
+
+                day.append(date, minTemp, maxTemp);
+                day.classList.remove('loading');
+
+        }
+}
+
+function resolveHeadElements(current, today) {
         const dateField = resolveElement('#date-field', ['loading'], [], String(formatDate(new Date(current.datetimeEpoch * 1000), 'epoch')));
 
         const timeField = resolveElement('#time-field', ['loading'], [], `As of ${String(formatTime(current.datetime))}`);
@@ -227,45 +261,12 @@ function showWeatherData() {
         const locationField = resolveElement('#location-field', ['loading'], [], String(state.location.name));
 
         const icon = resolveElement('#weather-icon', ['loading'], [], null);
-                icon.src = resolveIcon(String(current.icon));
+        icon.src = resolveIcon(String(current.icon));
 
         const desc = resolveElement('#weather-desc', ['loading'], [], today.desc);
-
-        resolveTempElements(today);
-        resolveFutureElements(future);
 }
 
-function resolveFutureElements(futureData){
-        for (let i = 1; i <= 5; i++){
-                const data = futureData[i];
-                const id = `#d${i}`
-                const day = document.querySelector(String(id));
-                const date = createElement('p', ['future-day-date'], null, formatDate(data.date, 'string'));
-                const minTemp = createElement('p', ['future-day-low'], null, String(`Low: ${data.minTemp}\u00B0`));
-                const maxTemp = createElement('p', ['future-day-high'], null, String(`High: ${data.maxTemp}\u00B0`));
-                console.log(date || null);
-                console.log(JSON.stringify(data, null, 2));
-                day.append(date, minTemp, maxTemp);
-                day.classList.remove('loading');
-
-        }
-
-        /*
-        {
-  "date": "2026-08-06",
-  "desc": "Partly cloudy throughout the day.",
-  "temp": 72.2,
-  "maxTemp": 74,
-  "minTemp": 70.1,
-  "feelsTemp": 72.2,
-  "precip": 0.91,
-  "sunrise": "05:49:30",
-  "sunset": "20:02:45"
-}
-         */
-}
-
-function resolveTempElements(today){
+function resolveBodyElements(current, today){
         const tempContainer = document.querySelector('#temp-container');
         const temps = tempContainer.querySelectorAll('div');
         temps.forEach(temp => {
@@ -289,8 +290,56 @@ function resolveTempElements(today){
                 const icon = document.createElement('img');
                 icon.src = resolveIcon(String(name.toLowerCase()));
                 temp.append(title, icon, display);
-
         });
+
+        const stageContainer = document.querySelector('#sun-container');
+        const stages = stageContainer.querySelectorAll('div');
+        stages.forEach((stage) => {
+                const name = `${stage.id.charAt(0).toUpperCase()}${stage.id.slice(1)}`;
+                const title = createElement('h4', [], `${stage.id}-title`, name);
+                const icon = createElement('img', [], `${stage.id}-icon`);
+                icon.src = resolveIcon(stage.id);
+                const display = createElement('p', [], `${stage.id}-display`, String(formatTime(today[stage.id])));
+                stage.append(icon, display);
+        });
+
+        /*
+        Current Data:  {
+ "datetime": "13:15:00",
+ "datetimeEpoch": 1786040100,
+ "temp": 78.6,
+ "feelslike": 78.6,
+ "humidity": 74.3,
+ "dew": 69.8,
+ "precip": 0,
+ "precipprob": 0,
+ "snow": 0,
+ "snowdepth": 0,
+ "preciptype": null,
+ "windgust": 4.8,
+ "windspeed": 0.1,
+ "winddir": 355,
+ "pressure": 1020,
+ "visibility": 9.9,
+ "cloudcover": 100,
+ "solarradiation": 467,
+ "solarenergy": 1.7,
+ "uvindex": 5,
+ "conditions": "Overcast",
+ "icon": "cloudy",
+ "stations": [
+  "D9672",
+  "KVYS",
+  "D9746"
+ ],
+ "source": "obs",
+ "sunrise": "05:56:42",
+ "sunriseEpoch": 1786013802,
+ "sunset": "20:07:27",
+ "sunsetEpoch": 1786064847,
+ "moonphase": 0.79
+}
+         */
 }
 
 function resolveElement( selector, remClasses = [], addClasses = [], value = null ) {
