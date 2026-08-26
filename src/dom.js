@@ -127,6 +127,7 @@ const globalFooter = () => {
 const loadLocationPage = () => {
         main.replaceChildren();
         const con = createElement('div', ['location-con'], 'content');
+
         con.style.opacity = '0';
         const locationHeader = () => {
                 const head = createElement('section', ['location-head']);
@@ -146,7 +147,7 @@ const loadLocationPage = () => {
                 head.append(con);
                 return head;
         }
-
+        const bodySection = createElement('section', [], 'body-content');
         const currentWeather = () => {
                 const s = createElement('section', ['location-body']);
 
@@ -161,13 +162,6 @@ const loadLocationPage = () => {
                 const sunset = createElement('div', ['sun-card'], 'sunset');
 
 
-                tempCon.append(minTemp, currentTemp, maxTemp);
-                sunCon.append(sunrise, sunset);
-                s.append(tempCon, sunCon);
-                return s;
-        }
-        const futureWeather = () => {
-                const s = createElement('section', ['location-footer']);
                 const futureCon = createElement('div', ['glass-bg'], 'future-weather');
                 const title = createElement('h4', ['future-title'], null, 'Next 5 Days');
                 const row = createElement('div', [], 'future-day-row');
@@ -178,12 +172,18 @@ const loadLocationPage = () => {
                 const d5 = createElement('div', [ 'card', 'future-day'], 'd5');
 
                 row.append(d1, d2, d3, d4, d5);
+
+
+                tempCon.append(minTemp, currentTemp, maxTemp);
+                sunCon.append(sunrise, sunset);
+                s.append(tempCon, sunCon);
                 futureCon.append(title, row);
                 s.append(futureCon);
                 return s;
         }
 
-        con.append(locationHeader(), currentWeather(), futureWeather());
+        bodySection.append(currentWeather())
+        con.append(locationHeader(), bodySection);
         return con;
 }
 
@@ -229,10 +229,10 @@ function showWeatherData() {
 
         resolveHeadElements(current, today);
         resolveBodyElements(current, today);
-        resolveFooterElements(future);
+        resolveFutureWeatherElements(future);
 }
 
-function resolveFooterElements(futureData){
+function resolveFutureWeatherElements(futureData){
         for (let i = 1; i <= 5; i++){
                 const data = futureData[i];
                 const id = `#d${i}`
@@ -295,8 +295,6 @@ function resolveBodyElements(current, today){
         const stageContainer = document.querySelector('#sun-container');
         const stages = stageContainer.querySelectorAll('div');
         stages.forEach((stage) => {
-                const name = `${stage.id.charAt(0).toUpperCase()}${stage.id.slice(1)}`;
-                const title = createElement('h4', [], `${stage.id}-title`, name);
                 const icon = createElement('img', [], `${stage.id}-icon`);
                 icon.src = resolveIcon(stage.id);
                 const display = createElement('p', [], `${stage.id}-display`, String(formatTime(today[stage.id])));
