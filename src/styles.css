@@ -244,7 +244,7 @@ footer {
 }
 
 .location-con {
-    justify-content: flex-start;
+    justify-content: space-evenly;
     overflow-y: auto;
     background: rgba(255, 255, 255, .2);
     border-radius: .6rem;
@@ -320,12 +320,12 @@ footer {
     justify-content: center;
 }
 
-#temp-container, #sun-container {
+#temp-container {
     min-height: 75px;
     gap: .6rem;
     padding: .6rem;
     display: flex;
-
+    flex-direction: column;
     width: 100%;
     max-width: max-content;
     border-radius: .6rem;
@@ -333,8 +333,19 @@ footer {
     justify-content: center;
 }
 
+#card-container {
+    display: flex;
+    flex-direction: row;
+}
+
 #sun-container {
-    flex-direction: column;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-evenly;
+    width: 100%;
+    max-width: max-content;
+    border-radius: .6rem;
 }
 
 .temp-card {
@@ -346,11 +357,28 @@ footer {
 }
 
 .sun-card {
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 1fr 1fr;
+
     gap: .4rem;
     width: 100%;
+    place-items: center;
+}
+
+.stage-title {
+    grid-column: 1 / 3;
+    text-align: center;
+}
+.stage-icon {
+    grid-column: 1 / 2;
+    grid-row: 2 / 3;
+    justify-self: flex-end;
+}
+.stage-time {
+    grid-column: 2 / 3;
+    grid-row: 2 / 3;
+    justify-self: flex-start;
 }
 
 .icon-container {
@@ -372,7 +400,7 @@ footer {
     grid-column: 1 / 3;
 }
 
-#future-weather .future-title {
+.card-title {
     text-align: center;
     margin: .6rem 0;
 }
@@ -396,7 +424,8 @@ footer {
 }
 
 .future-day {
-    padding: .8rem;
+    padding: .6rem;
+    gap: .6rem;
     display: grid;
     grid-template-columns: 1fr 1fr;
     grid-template-rows: 1fr 1fr;
@@ -407,8 +436,11 @@ footer {
     min-width: max-content;
 }
 
-.future-day:not(:last-child) {
-    border-right: 1px solid rgba(255, 255, 255, 0.25);
+.cust-divider {
+    background-color: rgba(255, 255, 255, 0.25);
+    height: 100%;
+    width: 2px;
+    min-width: 1px;
 }
 
 .future-day-date {
@@ -430,11 +462,11 @@ footer {
     font-weight: 600;
 }
 
-.future-day-label.low {
-    color: #191970;
+.low {
+    color: #B9D9EB;
 }
 
-.future-day-label.high {
+.high {
     color: #e63946;
 }
 

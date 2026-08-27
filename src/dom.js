@@ -151,8 +151,10 @@ const loadLocationPage = () => {
         const currentWeather = () => {
                 const s = createElement('section', ['location-body']);
 
-
+                const tempTitle = createElement('h4', ['card-title'], null, "Daily Temp");
+                const cardCon = createElement('div', [], 'card-container');
                 const tempCon = createElement('div', ['glass-bg'], 'temp-container');
+
                 const maxTemp = createElement('div', ['temp-card'], 'max-temp');
                 const currentTemp = createElement('div', ['temp-card'], 'current-temp');
                 const minTemp = createElement('div', ['temp-card'], 'min-temp');
@@ -163,21 +165,20 @@ const loadLocationPage = () => {
 
 
                 const futureCon = createElement('div', ['glass-bg'], 'future-weather');
-                const title = createElement('h4', ['future-title'], null, 'Next 5 Days');
+                const futureTitle = createElement('h4', ['card-title'], null, 'Next 5 Days');
+                const divider = createElement('span', ['cust-divider']);
                 const row = createElement('div', [], 'future-day-row');
-                const d1 = createElement('div', [ 'card', 'future-day'], 'd1');
-                const d2 = createElement('div', [ 'card', 'future-day'], 'd2');
-                const d3 = createElement('div', [ 'card', 'future-day'], 'd3');
-                const d4 = createElement('div', [ 'card', 'future-day'], 'd4');
-                const d5 = createElement('div', [ 'card', 'future-day'], 'd5');
 
-                row.append(d1, d2, d3, d4, d5);
+                for (let i = 1; i <= 5; i++){
+                        row.append(createElement('div', ['card', 'future-day'], `d${i}`));
+                        if (i < 5) {row.append(divider.cloneNode(true));}
+                }
 
-
-                tempCon.append(minTemp, currentTemp, maxTemp);
+                cardCon.append(minTemp, currentTemp, maxTemp);
+                tempCon.append(tempTitle, cardCon);
                 sunCon.append(sunrise, sunset);
                 s.append(tempCon, sunCon);
-                futureCon.append(title, row);
+                futureCon.append(futureTitle, row);
                 s.append(futureCon);
                 return s;
         }
@@ -267,7 +268,7 @@ function resolveHeadElements(current, today) {
 }
 
 function resolveBodyElements(current, today){
-        const tempContainer = document.querySelector('#temp-container');
+        const tempContainer = document.querySelector('#card-container');
         const temps = tempContainer.querySelectorAll('div');
         temps.forEach(temp => {
                 const references = {
@@ -285,7 +286,7 @@ function resolveBodyElements(current, today){
 
                 const id = temp.id;
                 const name = references.displayNames[id];
-                const title = createElement('p', [], `${id}-title`, String(name));
+                const title = createElement('p', [`${name.toLowerCase()}`], `${id}-title`, String(name));
                 const display = createElement('p', [], `${id}-display`, `${String(today[references.dataNames[id]])}\u00B0`);
                 const icon = document.createElement('img');
                 icon.src = resolveIcon(String(name.toLowerCase()));
@@ -293,51 +294,20 @@ function resolveBodyElements(current, today){
         });
 
         const stageContainer = document.querySelector('#sun-container');
-        const stages = stageContainer.querySelectorAll('div');
+        const stageCardContainer = createElement('div', [], 'sun-card-con');
+        const stageTitle = createElement('h4', [], null, 'Sun Stages');
+        const stages = stageCardContainer.querySelectorAll('div');
         stages.forEach((stage) => {
-                const icon = createElement('img', [], `${stage.id}-icon`);
+                const title = createElement('p', ['stage-title'], null,String(stage.id)[0].toUpperCase() + String(stage.id.slice(1)));
+                const icon = createElement('img', ['stage-icon'], `${stage.id}-icon`);
                 icon.src = resolveIcon(stage.id);
-                const display = createElement('p', [], `${stage.id}-display`, String(formatTime(today[stage.id])));
-                stage.append(icon, display);
+                const display = createElement('p', ['stage-time'], `${stage.id}-display`, String(formatTime(today[stage.id])));
+                if (display.textContent.charAt(0) === "0"){
+                        display.textContent = display.textContent.slice(1);
+                }
+                stageCardContainer.append(title, icon, display);
         });
-
-        /*
-        Current Data:  {
- "datetime": "13:15:00",
- "datetimeEpoch": 1786040100,
- "temp": 78.6,
- "feelslike": 78.6,
- "humidity": 74.3,
- "dew": 69.8,
- "precip": 0,
- "precipprob": 0,
- "snow": 0,
- "snowdepth": 0,
- "preciptype": null,
- "windgust": 4.8,
- "windspeed": 0.1,
- "winddir": 355,
- "pressure": 1020,
- "visibility": 9.9,
- "cloudcover": 100,
- "solarradiation": 467,
- "solarenergy": 1.7,
- "uvindex": 5,
- "conditions": "Overcast",
- "icon": "cloudy",
- "stations": [
-  "D9672",
-  "KVYS",
-  "D9746"
- ],
- "source": "obs",
- "sunrise": "05:56:42",
- "sunriseEpoch": 1786013802,
- "sunset": "20:07:27",
- "sunsetEpoch": 1786064847,
- "moonphase": 0.79
-}
-         */
+        stageContainer.append(stageTitle, stageCardContainer);
 }
 
 function resolveElement( selector, remClasses = [], addClasses = [], value = null ) {
