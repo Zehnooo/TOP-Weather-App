@@ -27,7 +27,7 @@ export function initDom () {
                 document.body.prepend(globalHeader());
                 main.append(homePage());
                 document.body.appendChild(globalFooter());
-                calcContentHeight();
+                //calcContentHeight();
                 return null;
 }
 
@@ -354,7 +354,7 @@ function changeBg(){
         const current = window.getComputedStyle(document.body).backgroundImage;
         document.body.style.backgroundImage = current === bg.blue ? 'var(--purp-grad)' : 'var(--blue-grad)';
 }
-
+        /*
 export function calcContentHeight(){
         const header = document.querySelector('header');
         const footer = document.querySelector('footer');
@@ -363,4 +363,6 @@ export function calcContentHeight(){
         const footerHeight = footer.getBoundingClientRect().height;
         mainContent.style.height = `calc(100vh - ${headerHeight}px - ${footerHeight}px)`;
 }
+
+         */
 
