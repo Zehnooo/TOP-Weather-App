@@ -177,6 +177,7 @@ footer div {
 
 #github {
     background: transparent;
+    box-shadow: none !important;
 }
 
 #github a svg {
@@ -189,9 +190,16 @@ footer div {
     border: 1px solid rgba(0, 0, 0, 0.08);
     background: black;
     cursor: pointer;
+    padding: .4rem;
+    min-width: 48px;
+    transition: transform .3s ease;
 }
 
-.btn:hover svg {
+.btn:hover {
+    transform: translateY(-4px);
+}
+
+.btn:hover svg, .btn:hover {
     color: var(--royal-blue);
 }
 

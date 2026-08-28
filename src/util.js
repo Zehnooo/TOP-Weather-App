@@ -142,3 +142,7 @@ export const formatTime = (time) => {
     let formattedHours = hours > 12 ? hours - 12 : hours;
     return `${formattedHours}:${minutes} ${designator}`;
 }
+
+export const formatTemp = (temp, currentScale) => {
+    return currentScale === 'fahrenheit' ? ((temp - 32) * (5/9)) : ((temp * 1.8) + 32);
+}

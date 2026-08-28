@@ -12,4 +12,23 @@ export const state =  {
     savedLocations: {},
     activePage: null,
     previousPage: null,
+    scale: {
+        default: 'fahrenheit',
+        current: 'fahrenheit',
+        preferred: null,
+        setCurrent() {
+            this.current === 'fahrenheit' ? this.current = 'celsius' : this.current = 'fahrenheit'
+            return null;
+        },
+        setPreferred(value) {
+            this.preferred = value;
+        },
+        getCurrent(){
+            return this.current;
+        },
+        getPreferred() {
+            return this.preferred;
+        }
+
+    }
 }
