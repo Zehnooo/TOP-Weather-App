@@ -5,5 +5,6 @@
 - Uses a few Web Awesome components
 - Manual location input with live updating option dropdown
 - Automatic locating via geolocator with permission
+- Fahrenheit to Celsius toggle
 
 #### Live Demo ==> https://zehnooo.github.io/TOP-Weather-App/
