@@ -153,13 +153,15 @@ const loadLocationPage = () => {
 
                 const tempTitle = createElement('h4', ['card-title'], null, "Daily Temp");
                 const cardCon = createElement('div', [], 'card-container');
-                const tempCon = createElement('div', ['glass-bg'], 'temp-container');
+                const tempCon = createElement('div', ['glass-bg', 'card'], 'temp-container');
 
                 const maxTemp = createElement('div', ['temp-card'], 'max-temp');
                 const currentTemp = createElement('div', ['temp-card'], 'current-temp');
                 const minTemp = createElement('div', ['temp-card'], 'min-temp');
 
-                const sunCon = createElement('div', ['glass-bg'], 'sun-container');
+                const sunCon = createElement('div', ['glass-bg', 'card'], 'sun-container');
+                const sunCardCon = createElement('div', [], 'sun-card-con');
+                const sunStageTitle = createElement('h4', ['card-title'], null, 'Sun Stages');
                 const sunrise = createElement('div', ['sun-card'], 'sunrise');
                 const sunset = createElement('div', ['sun-card'], 'sunset');
 
@@ -176,7 +178,8 @@ const loadLocationPage = () => {
 
                 cardCon.append(minTemp, currentTemp, maxTemp);
                 tempCon.append(tempTitle, cardCon);
-                sunCon.append(sunrise, sunset);
+                sunCardCon.append(sunrise, sunset);
+                sunCon.append(sunStageTitle, sunCardCon);
                 s.append(tempCon, sunCon);
                 futureCon.append(futureTitle, row);
                 s.append(futureCon);
@@ -293,9 +296,7 @@ function resolveBodyElements(current, today){
                 temp.append(title, icon, display);
         });
 
-        const stageContainer = document.querySelector('#sun-container');
-        const stageCardContainer = createElement('div', [], 'sun-card-con');
-        const stageTitle = createElement('h4', [], null, 'Sun Stages');
+        const stageCardContainer = document.querySelector('#sun-card-con');
         const stages = stageCardContainer.querySelectorAll('div');
         stages.forEach((stage) => {
                 const title = createElement('p', ['stage-title'], null,String(stage.id)[0].toUpperCase() + String(stage.id.slice(1)));
@@ -305,9 +306,8 @@ function resolveBodyElements(current, today){
                 if (display.textContent.charAt(0) === "0"){
                         display.textContent = display.textContent.slice(1);
                 }
-                stageCardContainer.append(title, icon, display);
+                stage.append(title, icon, display);
         });
-        stageContainer.append(stageTitle, stageCardContainer);
 }
 
 function resolveElement( selector, remClasses = [], addClasses = [], value = null ) {

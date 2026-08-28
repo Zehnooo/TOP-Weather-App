@@ -198,55 +198,9 @@ footer {
     cursor: default;
 }
 
-.loading {
-    opacity: .8;
-    border-radius: .8rem;
-    background: #e2e8f0 linear-gradient(
-            90deg,
-            #e2e8f0 0px,
-            #f8fafc 40px,
-            #e2e8f0 80px
-    );
-    background-size: 200% 100%;
-    animation: load 1.5s infinite linear;
-    box-shadow: var(--sm-shdw);
-}
-
-.loading.card {
-    width: 400px;
-    border: 1px solid #e1e1e1;
-    border-radius: 8px;
-    padding: 16px;
-}
-
-.loading.image {
-    width: 50%;
-    min-height: 200px;
-    margin-bottom: .8rem;
-}
-.loading.title {
-    height: 20px;
-    width: 70%;
-    margin-bottom: 10px;
-}
-.loading.text {
-    height: 14px;
-    width: 90%;
-}
-
-@keyframes load {
-    0% {
-        background-position: 100% 0;
-    }
-    100% {
-        background-position: -100% 0;
-    }
-}
-
 .location-con {
     justify-content: space-evenly;
     overflow-y: auto;
-    background: rgba(255, 255, 255, .2);
     border-radius: .6rem;
 }
 
@@ -322,48 +276,48 @@ footer {
 
 #temp-container {
     min-height: 75px;
-    gap: .6rem;
-    padding: .6rem;
     display: flex;
     flex-direction: column;
-    width: 100%;
-    max-width: max-content;
-    border-radius: .6rem;
     align-items: center;
-    justify-content: center;
 }
 
 #card-container {
     display: flex;
     flex-direction: row;
+    height: 100%;
+    width: 100%;
+    justify-content: space-evenly;
 }
 
 #sun-container {
     display: flex;
-    flex-direction: row;
+    flex-direction: column;
     align-items: center;
-    justify-content: space-evenly;
+}
+
+#sun-card-con {
+    display: flex;
     width: 100%;
-    max-width: max-content;
-    border-radius: .6rem;
+    height: 100%;
 }
 
 .temp-card {
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: center;
+    justify-content: space-between;
     padding: 1rem;
+    height: 100%;
 }
 
 .sun-card {
     display: grid;
     grid-template-columns: 1fr 1fr;
     grid-template-rows: 1fr 1fr;
-
-    gap: .4rem;
     width: 100%;
     place-items: center;
+    text-align: center;
+    padding: .4rem;
 }
 
 .stage-title {
@@ -373,7 +327,7 @@ footer {
 .stage-icon {
     grid-column: 1 / 2;
     grid-row: 2 / 3;
-    justify-self: flex-end;
+
 }
 .stage-time {
     grid-column: 2 / 3;
@@ -398,6 +352,15 @@ footer {
     border-radius: .6rem;
     padding: .6rem;
     grid-column: 1 / 3;
+}
+
+.card {
+    gap: .6rem;
+    padding: .6rem;
+    width: 100%;
+    max-width: max-content;
+    border-radius: .6rem;
+    justify-content: flex-start;
 }
 
 .card-title {
