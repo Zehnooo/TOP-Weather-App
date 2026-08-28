@@ -138,12 +138,14 @@ const globalFooter = () => {
                 const scale = state.scale.getCurrent();
                 scaleBtn.textContent = (scaleBtn.textContent === 'F\u00B0' ? 'C\u00B0' : 'F\u00B0');
                 const elems = getScalableElements();
-                for (const tempElement of elems){
-                        const temp = Number(tempElement.textContent.replace('\u00B0',''));
-                        const rescaled = Number(formatTemp(temp, scale).toFixed(1));
-                        tempElement.textContent = `${rescaled}\u00B0`
+                if (elems.length > 0){
+                        for (const tempElement of elems){
+                                const temp = Number(tempElement.textContent.replace('\u00B0',''));
+                                const rescaled = Number(formatTemp(temp, scale).toFixed(1));
+                                tempElement.textContent = `${rescaled}\u00B0`
+                        }
+                        state.scale.setCurrent();
                 }
-                state.scale.setCurrent();
         });
 
         con.append(scaleBtn, bgSwitch, githubButton);
