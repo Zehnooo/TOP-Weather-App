@@ -54,11 +54,6 @@
     font-style: normal;
 }
 
-html, body {
-    height: 100svh;
-    overflow: hidden;
-}
-
 body {
     background-image: var(--blue-grad);
     background-size: cover;
@@ -66,20 +61,18 @@ body {
     background-repeat: no-repeat;
     display: flex;
     flex-direction: column;
+    min-height: 100svh;
 }
 
 #root {
     display: flex;
-    align-items: center;
     flex: 1 1 auto;
-    min-height: 0;
-    overflow: auto;
 }
 
 #content {
     display: flex;
     flex-direction: column;
-    height: 100%;
+    height: auto;
     min-height: 0;
     width: 100%;
     align-items: center;
@@ -147,7 +140,7 @@ header, footer {
 }
 
 header {
-    margin-bottom: auto;
+
     display: flex;
     width: 100%;
     min-height: 50px;
@@ -163,7 +156,7 @@ header div {
 }
 
 footer {
-    margin-top: auto;
+
     display: flex;
     width: 100%;
     min-height: 50px;
@@ -251,8 +244,8 @@ footer div {
 }
 
 .location-con {
-    justify-content: space-evenly;
-    overflow-y: auto;
+    justify-content: flex-start;
+    overflow: visible;
     border-radius: .6rem;
 }
 
